@@ -20,16 +20,24 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         nouvellePartie(){
 
+            this.finPartie();
+
         this.affichagePointage(1);
 
-        this.pomme = new Pomme();
+        this.pomme = new Pomme(this);
 
-        this.serpent = new Serpent();
+        this.serpent = new Serpent(this);
 
         }
 
         finPartie(){
 
+        if(this.pomme !== undefined){
+
+            this.pomme.supprimePomme();
+            this.pomme = undefined;
+
+        }
 
 
         }
@@ -45,20 +53,64 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //le serpent
     class Serpent{
 
-        constructor() {
+        constructor(_leJeu) {
 
             console.log("serpent")
 
+            this.leJeu = _leJeu;
+
         }
+
+        verifTouche(evt){
+
+        }
+
+        deplacement(dirCode){
+
+        }
+
+        controleSerpent(){
+
+        }
+
+        dessineCarre(x, y){
+
+        }
+
+        supprimeSerpent(){
+
+        }
+
 
     }
 
     //la pomme
     class Pomme{
 
-        constructor() {
-
+        constructor(_leJeu) {
             console.log("pomme")
+
+            this.leJeu = _leJeu;
+
+            this.pomme = [];
+
+            this.ajoutePomme();
+
+        }
+
+        ajoutePomme(){
+
+        var posX = Math.floor (Math.random() * this.leJeu.grandeurGrille);
+        var posY = Math.floor (Math.random() * this.leJeu.grandeurGrille);
+
+        this.pomme = [this.leJeu.s.rect(posX * this.leJeu.grandeurCarre, posY * this.leJeu.grandeurCarre, this.leJeu.grandeurCarre, this.leJeu.grandeurCarre).attr({fill:"red"}),posX,posY]
+
+
+        }
+
+        supprimePomme(){
+
+            this.pomme[0].remove();
 
         }
     }
