@@ -37,6 +37,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
             this.pomme.supprimePomme();
             this.pomme = undefined;
 
+            if(this.serpent !== undefined){
+
+                this.serpent.supprimeSerpent();
+                this.serpent = undefined;
+
+            }
+
         }
 
 
@@ -68,6 +75,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
             this.serpentLongueur = 1;
             this.tblCarreSerpent = [];
 
+            this.touche =false;
+
             this.vitesse = 250;
 
             this.timing = setInterval(this.controleSerpent.bind(this), this.vitesse);
@@ -92,22 +101,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
           case 37:
               this.nextMoveX = -1;
-              this.nextMoveX = 0;
+              this.nextMoveY = 0;
               break;
 
           case 38:
               this.nextMoveX = 0;
-              this.nextMoveX = -1;
+              this.nextMoveY = -1;
               break;
 
           case 39:
               this.nextMoveX = 1;
-              this.nextMoveX = 0;
+              this.nextMoveY = 0;
               break;
 
           case 40:
               this.nextMoveX = 0;
-              this.nextMoveX = 1;
+              this.nextMoveY = 1;
               break;
 
       }
@@ -117,23 +126,74 @@ document.addEventListener("DOMContentLoaded", function(event) {
         controleSerpent(){
 
             var nextX = this.currentX + this.nextMoveX;
-
             var nextY = this.currentY + this.nextMoveY;
 
-            this.dessineCarre(nextX, nextY);
+            this.tblCarreSerpent.forEach(function (element){
 
+                if(nextX === element[1] && nextY === element[2]){
+
+                    this.leJeu.finPartie();
+                    this.touche = true;
+
+                }
+
+            }.bind(this));
+
+
+            if(nextY < 0 || nextX < 0 || nextY > this.leJeu.grandeurGrille-1 || nextX > this.leJeu.grandeurGrille-1){
+
+                this.leJeu.finPartie();
+                this.touche = true;
+            }
+
+            if(!this.touche){
+
+                if(this.currentX === this.leJeu.pomme.pomme[1] && this.currentY === this.leJeu.pomme.pomme[2]){
+
+                    this.serpentLongueur ++;
+
+                    this.leJeu.affichagePointage(this.serpentLongueur);
+
+                    this.leJeu.pomme.supprimePomme();
+
+                    this.leJeu.pomme.ajoutePomme();
+
+                }
+
+            this.dessineCarre(nextX, nextY);
             this.currentX = nextX;
             this.currentY = nextY;
+            }
 
         }
 
         dessineCarre(x, y){
 
+        var unCarre = [this.leJeu.s.rect(x * this.leJeu.grandeurCarre, y * this.leJeu.grandeurCarre, this.leJeu.grandeurCarre, this.leJeu.grandeurCarre),x ,y]
 
+        this.tblCarreSerpent.push(unCarre);
+
+        if(this.tblCarreSerpent.length > this.serpentLongueur){
+
+            this.tblCarreSerpent[0][0].remove();
+
+            this.tblCarreSerpent.shift();
+
+        }
 
         }
 
         supprimeSerpent(){
+
+            clearInterval(this.timing);
+
+            while(this.tblCarreSerpent.length >0){
+
+                this.tblCarreSerpent[0][0].remove();
+
+                this.tblCarreSerpent.shift();
+
+            }
 
         }
 
